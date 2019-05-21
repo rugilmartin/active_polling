@@ -32,7 +32,35 @@ def combine_census_returns():
     census_name = "../data/census_clean.csv"
     returns_headers, returns_data = read_file(returns_name)
     census_headers, census_data = read_file(census_name)
-    data = np.insert(census_data, range(3, 11), returns_data[:,range(3, 11), axis = 1)
+    print(returns_data[1,11])
+    first_slice = [[i] for i in range(0,3140)]
+    returns_data[first_slice, range(4,12)] = returns_data[first_slice, range(4,12)].astype(float).astype(int) 
+    
+    combine_headers = ['CountyID', 'State', 'County', 'TotalPop', '2004_rep', '2004_dem', '2004_dem_percent', '2008_rep', '2008_dem', '2008_dem_percent', '2012_rep', '2012_dem', '2012_dem_percent', '2016_rep', '2016_dem', '2016_dem_percent', '2016_turnout', 'male/pop', 'hispanic/pop', 'white/pop', 'black/pop', 'native/pop', 'asian/pop', 'pacific/pop', 'voting_age_citizens/pop', 'income', 'income_per_cap', 'poverty', 'child_poverty', 'professional', 'service', 'office', 'construction', 'production', 'drive', 'carpool', 'transit', 'walk', 'other_transport', 'work_at_home', 'mean_compute', 'employed/pop', 'private_work', 'public_work', 'self_employed', 'family_work', 'unemployment']
+
+
+    combine_data = np.empty([len(returns_data), len(combine_headers)], dtype = object)
+    for i in range(len(returns_data)):
+        assert len(census_data[np.where(census_data[:,0] == returns_data[i,1])]) == 1, "County surjection"
+        c_data = census_data[np.where(census_data[:,0] == returns_data[i,1])][0]
+        votes = returns_data[i, range(4,12)].astype(float).astype(int)
+        percent_dem = [100*float(votes[j])/(votes[j] + votes[j+1]) for j in range(0,8,2)]
+        turnout = float(votes[6] + votes[7])/float(c_data[3])
+        male_pop = float(c_data[4])/float(c_data[3])*100
+        assert(turnout > 0 and turnout < 1), "In bounds"
+        combine_data[i, range(4)] = census_data[i, range(4)]
+        combine_data[i, (4,5,7,8,10,11,13,14)] = votes
+        combine_data[i, (6,9,12,15)] = percent_dem
+        combine_data[i, 16] = turnout*100
+        combine_data[i, 17] = male_pop
+        combine_data[i, range(18,24)] = c_data[range(6,12)]
+        combine_data[i, 24] = float(c_data[12])/float(c_data[3])*100
+        combine_data[i, (25,26)] = c_data[[13,15]]
+        combine_data[i, range(27, len(combine_headers))] = c_data[range(17, len(c_data))]
+        combine_data[i,41] = float(c_data[31])/float(c_data[3])*100
+    write_file('../data/full_clean_data.csv', combine_headers, combine_data)
+
+    #data = np.insert(census_data, range(3, 11), returns_data[:,range(3, 11), axis = 1)
 
     
 
@@ -100,3 +128,5 @@ def odd_case(full, year, c_id, clean):
     else:
         print(state, county, c_id)
         return [0, 0]
+
+combine_census_returns()
