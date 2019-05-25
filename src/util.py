@@ -1,5 +1,6 @@
 import numpy as np
 import csv
+import matplotlib.pyplot as plt
 
 def read_file(in_filename):
     with open(in_filename) as f:
@@ -40,3 +41,17 @@ def add_noise(y, party_var = 0.02, turnout_var = 0.04, party_bias = 0, turnout_b
     y[:,0] += np.random.normal(party_bias, party_var, len(y))
     y[:,1] += np.random.normal(party_bias, turnout_bias, len(y))
     return y
+
+def plot(savename, x, y, legend = None, x_label = None, y_label = None, title = None):
+    for i in range(len(y)):
+        plt.plot(x, y[i])   
+    if legend != None:
+        plt.legend(legend)
+    if x_label != None:
+        plt.xlabel(x_label)
+    if y_label != None:
+        plt.ylabel(y_label)
+    if title != None:
+        plt.title(title)
+    plt.savefig("./output/" + savename) 
+
