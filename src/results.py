@@ -1,6 +1,6 @@
 import numpy as np
 import csv
-from data_clean import read_file, write_file
+from util import read_file, write_file
 
 
 #preds should have shape (3140,2) with predicted dem_percent, and predicted turnout

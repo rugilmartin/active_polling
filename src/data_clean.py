@@ -2,21 +2,11 @@
 import csv
 import numpy as np
 import pandas as pd
+from util import write_file, read_file
+
 
 #Sean work under here
 
-def read_file(in_filename):
-    with open(in_filename) as f:
-        reader = csv.reader(f)
-        headers = next(reader)
-        data = [row for row in reader]
-    return headers, np.array(data)
-
-def write_file(out_filename, headers, data):
-    with open(out_filename, 'w') as out_file:
-        writer = csv.writer(out_file, delimiter = ',')
-        writer.writerow(headers)
-        writer.writerows(data)
 
 def clean_census():
     in_filename = "../data/census.csv" 
