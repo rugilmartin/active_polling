@@ -2,21 +2,11 @@
 import csv
 import numpy as np
 import pandas as pd
+from util import write_file, read_file
+
 
 #Sean work under here
 
-def read_file(in_filename):
-    with open(in_filename) as f:
-        reader = csv.reader(f)
-        headers = next(reader)
-        data = [row for row in reader]
-    return headers, np.array(data)
-
-def write_file(out_filename, headers, data):
-    with open(out_filename, 'w') as out_file:
-        writer = csv.writer(out_file, delimiter = ',')
-        writer.writerow(headers)
-        writer.writerows(data)
 
 def clean_census():
     in_filename = "../data/census.csv" 
@@ -32,7 +22,6 @@ def combine_census_returns():
     census_name = "../data/census_clean.csv"
     returns_headers, returns_data = read_file(returns_name)
     census_headers, census_data = read_file(census_name)
-    print(returns_data[1,11])
     first_slice = [[i] for i in range(0,3140)]
     returns_data[first_slice, range(4,12)] = returns_data[first_slice, range(4,12)].astype(float).astype(int) 
     
@@ -44,14 +33,14 @@ def combine_census_returns():
         assert len(census_data[np.where(census_data[:,0] == returns_data[i,1])]) == 1, "County surjection"
         c_data = census_data[np.where(census_data[:,0] == returns_data[i,1])][0]
         votes = returns_data[i, range(4,12)].astype(float).astype(int)
-        percent_dem = [100*float(votes[j])/(votes[j] + votes[j+1]) for j in range(0,8,2)]
+        percent_dem = [float(votes[j])/(votes[j] + votes[j+1]) for j in range(0,8,2)]
         turnout = float(votes[6] + votes[7])/float(c_data[3])
         male_pop = float(c_data[4])/float(c_data[3])*100
         assert(turnout > 0 and turnout < 1), "In bounds"
         combine_data[i, range(4)] = census_data[i, range(4)]
         combine_data[i, (4,5,7,8,10,11,13,14)] = votes
         combine_data[i, (6,9,12,15)] = percent_dem
-        combine_data[i, 16] = turnout*100
+        combine_data[i, 16] = turnout
         combine_data[i, 17] = male_pop
         combine_data[i, range(18,24)] = c_data[range(6,12)]
         combine_data[i, 24] = float(c_data[12])/float(c_data[3])*100
