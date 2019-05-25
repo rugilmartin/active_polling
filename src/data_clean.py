@@ -22,10 +22,10 @@ def combine_census_returns():
     census_name = "../data/census_clean.csv"
     returns_headers, returns_data = read_file(returns_name)
     census_headers, census_data = read_file(census_name)
-    first_slice = [[i] for i in range(0,3140)]
+    first_slice = [[i] for i in range(0,3141)]
     returns_data[first_slice, range(4,12)] = returns_data[first_slice, range(4,12)].astype(float).astype(int) 
     
-    combine_headers = ['CountyID', 'State', 'County', 'TotalPop', '2004_rep', '2004_dem', '2004_dem_percent', '2008_rep', '2008_dem', '2008_dem_percent', '2012_rep', '2012_dem', '2012_dem_percent', '2016_rep', '2016_dem', '2016_dem_percent', '2016_turnout', 'male/pop', 'hispanic/pop', 'white/pop', 'black/pop', 'native/pop', 'asian/pop', 'pacific/pop', 'voting_age_citizens/pop', 'income', 'income_per_cap', 'poverty', 'child_poverty', 'professional', 'service', 'office', 'construction', 'production', 'drive', 'carpool', 'transit', 'walk', 'other_transport', 'work_at_home', 'mean_compute', 'employed/pop', 'private_work', 'public_work', 'self_employed', 'family_work', 'unemployment']
+    combine_headers = ['CountyID', 'State', 'County', 'TotalPop', '2004_dem', '2004_rep', '2004_dem_percent', '2008_dem', '2008_rep', '2008_dem_percent', '2012_dem', '2012_rep', '2012_dem_percent', '2016_dem', '2016_rep', '2016_dem_percent', '2016_turnout', 'male/pop', 'hispanic/pop', 'white/pop', 'black/pop', 'native/pop', 'asian/pop', 'pacific/pop', 'voting_age_citizens/pop', 'income', 'income_per_cap', 'poverty', 'child_poverty', 'professional', 'service', 'office', 'construction', 'production', 'drive', 'carpool', 'transit', 'walk', 'other_transport', 'work_at_home', 'mean_compute', 'employed/pop', 'private_work', 'public_work', 'self_employed', 'family_work', 'unemployment']
 
 
     combine_data = np.empty([len(returns_data), len(combine_headers)], dtype = object)

@@ -22,6 +22,7 @@ def county_state_matrix():
         result[:,i] = (data[:,2] == states[i])
     return result.astype(float)
 
+#returns x, y as floats
 def basic_data():
     headers, data = read_file('../data/full_clean_data.csv')
     y = data[:,[15,16]].astype(float)
@@ -29,11 +30,13 @@ def basic_data():
     x = np.concatenate((x, county_state_matrix()), axis = 1)
     return x, y
 
+def states():
+    headers, data = read_file('../data/full_clean_data.csv')
+    return np.unique(data[:,2])
+
 #party_var and bias comes from https://5harad.com/papers/polling-errors.pdf
 #turnout_var and bias is just an estimate
 def add_noise(y, party_var = 0.02, turnout_var = 0.04, party_bias = 0, turnout_bias = 0):
     y[:,0] += np.random.normal(party_bias, party_var, len(y))
     y[:,1] += np.random.normal(party_bias, turnout_bias, len(y))
     return y
-
-print(basic_data())
