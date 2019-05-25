@@ -14,9 +14,26 @@ def write_file(out_filename, headers, data):
         writer.writerow(headers)
         writer.writerows(data)
 
+def county_state_matrix():
+    headers, data = read_file('../data/full_clean_data.csv')
+    result = np.empty([len(data), 50])
+    states = np.unique(data[:,2])[:-1]
+    for i in range(len(states)):
+        result[:,i] = (data[:,2] == states[i])
+    return result.astype(float)
+
 def basic_data():
     headers, data = read_file('../data/full_clean_data.csv')
     y = data[:,[15,16]].astype(float)
     x = np.delete(data, [0, 1, 2, 13,14,15,16], axis = 1).astype(float)
+    x = np.concatenate((x, county_state_matrix()), axis = 1)
     return x, y
 
+#party_var and bias comes from https://5harad.com/papers/polling-errors.pdf
+#turnout_var and bias is just an estimate
+def add_noise(y, party_var = 0.02, turnout_var = 0.04, party_bias = 0, turnout_bias = 0):
+    y[:,0] += np.random.normal(party_bias, party_var, len(y))
+    y[:,1] += np.random.normal(party_bias, turnout_bias, len(y))
+    return y
+
+print(basic_data())
