@@ -45,6 +45,20 @@ def add_noise(y, party_var = 0.02, turnout_var = 0.04, party_bias = 0, turnout_b
 def square_error(preds, y):
     return (np.square(y - preds)).mean(axis = 0)
 
+def performance(solver, intervals, reps):
+    X, y = basic_data()
+    polls = add_noise(y)
+    square_errors = np.zeros([2, len(intervals)])
+    for i in range(len(intervals)):
+        for j in range(reps):
+            sample = np.random.choice(range(len(X)), size = intervals[i], replace = False)
+            X_train = X[sample]
+            y_train = polls[sample]
+            preds = solver(X, X_train, y_train)
+            square_errors[:, i] += square_error(y, preds)
+        square_errors[:,i] /= reps
+    return square_errors
+
 def plot(savename, x, y, legend = None, x_label = None, y_label = None, title = None):
     for i in range(len(y)):
         plt.plot(x, y[i])   
