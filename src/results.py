@@ -4,8 +4,7 @@ from util import read_file, write_file
 import util
 
 
-#preds should have shape (3140,2) with predicted dem_percent, and predicted turnout
-
+actual_state_votes = [0,0,0,0,1,1,1,1,1,0,0,1,0,1,0,0,0,0,0,1,1,1,0,1,0,0,0,0,1,1,1,1,1,0,0,0,0,1,0,1,0,0,0,0,0,1,1,1,0,0,0]
 
 def state_percent(preds):
     headers, data = read_file("../data/full_clean_data.csv")
@@ -26,3 +25,13 @@ def electoral_votes(preds):
     print(percent)
     dem_electorates = np.around(np.around(percent) * electoral_votes[:,1].astype(int)).sum()
     return 538 - dem_electorates, dem_electorates
+
+def analyze_results(preds):
+    percent = state_percent(preds)
+    headers, data = read_file("../data/full_clean_data.csv")
+    states = util.states()
+    wrongly_dem = [states[i] for i in range(51) if (preds[i] > 0.5 and actual_state_votes[i] == 0)]
+    wrongly_rep = [states[i]  for i in range(51) if (preds[i] <= 0.5 and actual_state_votes[i] == 1)]
+    print("Wrongly predicted rep: ", wrongly_rep)
+    print("Wrongly predicted dem: ", wrongly_dem)
+    print("Electoral votes: ", electoral_votes(preds))
