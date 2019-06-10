@@ -42,6 +42,9 @@ def add_noise(y, party_var = 0.02, turnout_var = 0.04, party_bias = 0, turnout_b
     y[:,1] += np.random.normal(party_bias, turnout_bias, len(y))
     return y
 
+def square_error(preds, y):
+    return (np.square(y - preds)).mean(axis = 0)
+
 def plot(savename, x, y, legend = None, x_label = None, y_label = None, title = None):
     for i in range(len(y)):
         plt.plot(x, y[i])   
