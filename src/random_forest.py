@@ -4,6 +4,7 @@ from util import plot, add_noise, write_file, read_file, county_state_matrix, ba
 from sklearn.ensemble import RandomForestRegressor
 import results
 
+
 # Fit a random forest model, without using active learning.
 # Returns: The fitted model.
 # pct_polled: The proportion of data randomly chosen to be revealed.
@@ -16,17 +17,25 @@ def baseline(pct_polled=1):
     x_train = x[train_subset, :]
     y_train = add_noise(y[train_subset, :])
 
-    forest = RandomForestRegressor(n_estimators=50, max_depth=4,
-                                   random_state=2)
+    forest = RandomForestRegressor(n_estimators=50, max_depth=4)
     forest.fit(x_train, y_train)
     return forest
 
-def forest_train_predict(X, X_train, y_train):
-    forest = RandomForestRegressor(n_estimators=50, max_depth=4,
-                                   random_state=2)
+
+def train_predict(X, X_train, y_train, args=None):
+    if args is not None:
+        if "max_depth" in args:
+            max_depth = args["max_depth"]
+        else:
+            max_depth = 4
+    else:
+        max_depth = 4
+    forest = RandomForestRegressor(n_estimators=50,
+                                   max_depth=max_depth)
     forest.fit(X_train, y_train)
     preds = forest.predict(X)
     return preds
+
 
 def predict_and_record(forest, save_path):
     x, y = basic_data()
@@ -70,4 +79,4 @@ def main():
          title="MSE for Random Forest Baseline")
 
 
-if __name__ == "__main__": main()
+# if __name__ == "__main__": main()
